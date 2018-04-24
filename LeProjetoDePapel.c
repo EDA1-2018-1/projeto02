@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define MAX 10
 
 //1 - Abre arquivo e armazena em uma matriz o valor de cada pixel da imagem
 //2 - Função que rotacione um vetor, pegue o ultimo elemento do vetor e coloque como o primeiro elemento
@@ -15,6 +16,7 @@
 //10 - Função que faça a formula de homogenidade
 
 int main (int argc, char *argv[]){
+    int salvaImagem[MAX];
     
 return 0;
 }
