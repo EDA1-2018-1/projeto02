@@ -16,7 +16,7 @@
 //10 - Função que faça a formula de homogenidade
 
 int main (int argc, char *argv[]){
-    int salvaImagem[MAX];
+    int salvaImagem[MAX], i, j;
     
 return 0;
 }
