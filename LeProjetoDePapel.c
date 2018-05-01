@@ -15,11 +15,24 @@ int LerImagem (){
         n++;
     }
 }
-
-
-
+/*
+int** alocarMatriz(int Linhas,int Colunas){
+  int i,j;
+  int **m = (int**)malloc(Linhas * sizeof(int*));
+  for (i = 0; i < Linhas; i++){
+       m[i] = (int*) malloc(Colunas * sizeof(int));
+       for (j = 0; j < Colunas; j++){
+            m[i][j] = 0;
+       }
+  }
+return m;
+}
+*/
 
 //2 - Função que rotacione um vetor, pegue o ultimo elemento do vetor e coloque como o primeiro elemento
+ 
+
+
 //3 - Função que use a função de rotacionar para rotacionar-lo até voltar ao vetor inicial, e comparar o
 //valor do vetor em decimal e armazenar o menor desses valores
 //4 - Função que transforme um vetor de numeros binarios em um numero decimal
