@@ -10,7 +10,7 @@ int main (int argc, char *argv[]){
     FILE *fp;
     char nomeArquivo[33] = "asphalt_01.txt", guardarPonto;
     int *imagem, linha=0, coluna=0, tempVar, numTreinamento[25];
-    int random=49, contAsphalt = 0, numTeste[25];
+    int random=49, contAsphalt = 0, contGrass = 0, numTeste[25];
 
     gerarNumerosTreinamento( random, numTreinamento);
     gerarNumerosTeste(numTeste, numTreinamento);
@@ -22,7 +22,7 @@ int main (int argc, char *argv[]){
         }else{
             sprintf(nomeArquivo,"./DataSet/asphalt/asphalt_%d.txt", numTreinamento[contAsphalt]);
         }
-        printf("%s", nomeArquivo);
+        printf("%s\n", nomeArquivo);
         fp = fopen(nomeArquivo,"r");
         do{
             fscanf(fp,"%d%c", &tempVar, &guardarPonto);
@@ -32,8 +32,28 @@ int main (int argc, char *argv[]){
                 imagem[coluna-1] = tempVar;
             }
         }while(!feof(fp));
-        fclose(fp);
-        free(imagem);
+        // fclose(fp);
+        // free(imagem);    - comentar com o Lucas depois
+    }
+
+    for(contGrass = 0; contGrass < 25; contGrass++){
+        if(numTreinamento[contGrass] < 10){
+            sprintf(nomeArquivo,"./DataSet/grass/grass_0%d.txt", numTreinamento[contGrass]);
+        }else{
+            sprintf(nomeArquivo,"./DataSet/grass/grass_%d.txt", numTreinamento[contGrass]);
+        }
+        printf("%s\n", nomeArquivo);
+        fp = fopen(nomeArquivo,"r");
+        do{
+            fscanf(fp,"%d%c", &tempVar, &guardarPonto);
+            if(guardarPonto == ';'){
+                coluna++;
+                imagem = (int *) realloc(imagem, coluna*sizeof (int));
+                imagem[coluna-1] = tempVar;
+            }
+        }while(!feof(fp));
+        // fclose(fp);
+        // free(imagem);    - comentar com o Lucas depois
     }
 
 
