@@ -10,7 +10,7 @@ int main (int argc, char *argv[]){
     FILE *fp;
     char nomeArquivo[33] = "asphalt_01.txt", guardarPonto;
     int *imagem, linha=0, coluna=0, tempVar, numTreinamento[25];
-    int random=49, contAsphalt = 0, contGrass = 0, numTeste[25];
+    int random=49, contAsphalt = 0, contGrass = 0, numTeste[25], guardarColuna;
 
     gerarNumerosTreinamento( random, numTreinamento);
     gerarNumerosTeste(numTeste, numTreinamento);
@@ -30,11 +30,19 @@ int main (int argc, char *argv[]){
                 coluna++;
                 imagem = (int *) realloc(imagem, coluna*sizeof (int));
                 imagem[coluna-1] = tempVar;
+            }else{
+                coluna = 0;
+                linha++;
             }
         }while(!feof(fp));
+        printf("%d\n", imagem[0]);
+        linha = 0;
         // fclose(fp);
         // free(imagem);    - comentar com o Lucas depois
     }
+
+    gerarNumerosTreinamento( random, numTreinamento);
+    gerarNumerosTeste(numTeste, numTreinamento);
 
     for(contGrass = 0; contGrass < 25; contGrass++){
         if(numTreinamento[contGrass] < 10){
@@ -59,6 +67,8 @@ int main (int argc, char *argv[]){
 
 return 0;
 }
+
+/////////////////////////////////////////////////////////////////////////////
 
 void gerarNumerosTreinamento(int random, int *numTreinamento){
     int i, j, tempComp;
