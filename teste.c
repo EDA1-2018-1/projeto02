@@ -23,7 +23,7 @@ return 0;
 }
 //=================================================================================
 int media_de_matriz () {//Pega uma matriz 3x3 e transforma numa matriz 3x3 binária
-  int pixel, soma, media, novaMatriz;
+  int pixel, soma, media, novaMatriz, i, j;
 
   for (i = 0; i < 3; i++){
     for (j = 0; j < 3; j++){
@@ -95,4 +95,22 @@ void Binario_para_decimal(){//Transforma binario para decimal
     num = num/10;
   }
   while(num!=0);
+}
+
+//=============================================================================
+int main (int argc, char *argv[]){
+    FILE *fp;
+    char nomeArquivo[] = "asphalt_01.txt", guardarPonto;
+    int imagem[1025][1025], linha=0, coluna=0;
+    fp = fopen("./DataSet/asphalt/asphalt_01.txt","r");
+    do{
+        fscanf(fp,"%d%c", &imagem[linha][coluna], &guardarPonto);
+        if(guardarPonto == ';'){
+            coluna++;
+        }else{
+            coluna = 0;
+            linha++;
+        }
+    }while(!feof(fp));
+return 0;
 }
