@@ -15,13 +15,9 @@ int main (int argc, char *argv[]){
     gerarNumerosTreinamento( random, numTreinamento);
     gerarNumerosTeste(numTeste, numTreinamento);
 
-    imagem = (int *) malloc(sizeof(int));
+    imagem = (int**) malloc(sizeof(int*));
     for(contAsphalt = 0; contAsphalt < 25; contAsphalt++){
-        if(numTreinamento[contAsphalt] < 10){
-            sprintf(nomeArquivo,"./DataSet/asphalt/asphalt_0%d.txt", numTreinamento[contAsphalt]);
-        }else{
-            sprintf(nomeArquivo,"./DataSet/asphalt/asphalt_%d.txt", numTreinamento[contAsphalt]);
-        }
+        sprintf(nomeArquivo,"./DataSet/asphalt/asphalt_%02d.txt", numTreinamento[contAsphalt]);
         printf("%s\n", nomeArquivo);
         fp = fopen(nomeArquivo,"r");
         do{
@@ -37,8 +33,12 @@ int main (int argc, char *argv[]){
         }while(!feof(fp));
         printf("%d\n", imagem[0]);
         linha = 0;
+        
         // fclose(fp);
         // free(imagem);    - comentar com o Lucas depois
+
+        // 1; 2; 3; 4; 5; 6; 7; 8; 9; 10
+
     }
 
     gerarNumerosTreinamento( random, numTreinamento);
@@ -82,7 +82,7 @@ void gerarNumerosTreinamento(int random, int *numTreinamento){
             }
         }
         numTreinamento[j] = tempComp;
-    }        
+    }
 }
 
 void gerarNumerosTeste(int *numTeste, int *numTreinamento){
@@ -91,11 +91,11 @@ void gerarNumerosTeste(int *numTeste, int *numTreinamento){
         for(j=0 ; j < 25; j++){
             if(i == numTreinamento[j]){
                 break;
-            }   
-        }  
+            }
+        }
         if(j == 25){
             numTeste[a] = i;
             a++;
         }
-    }        
+    }
 }
