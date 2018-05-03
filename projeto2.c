@@ -1,4 +1,4 @@
-/*
+pixels/*
     Érico Bandeira - 16/0070287
     Luciana Ribeiro Lins de Albuquerque - 15/0016131
     Max Henrique Barbosa - 16/0047013
@@ -17,6 +17,20 @@ void calculateTrainingMatrics(int *rows, int *columns, int *grass, int *asphalt,
 void selectAsphaltImages(int *asphalt, int *rows, int *columns, char *fileName, FILE *fp);
 void selectGrassImages(int *grass, int *rows, int *columns, char *fileName, FILE *fp);
 void countRowsAndColumns(char *fileName, FILE *fp, int *columns, int *rows);
+void ilbp(int **, int, int, float **, int);
+void quadranteIlbp(int **, int, int, float **, int);
+void rotateArray(int *);
+void normalizeArray(float *,int);
+void average(float **,float *,float *);
+void averageEuclidiana(float **, float *, float *, int *, int *, int *);
+void glcm(int **, int, int, float **, int);
+
+float calculateHomogeneityLevel(int **);
+
+int calculateEnergyLevel(int **);
+int calculateContrastLevel(int **);
+int transfomBinToDec(int *);
+int findMinValue(int *, int, int);
 int generatorRandomNumbers();
 
 int main() {
@@ -248,6 +262,96 @@ void averageEuclidiana(float **arrayImages,float *avgAsphalt,float *avgGrass,int
   }
 }
 
-// void glcm(){
-//
-// }
+void glcm(int **pixels, int row, int colum, float **arrayImages,int count){
+  int ***matrizesGlcm;
+  int i,j,t;
+
+  matrizesGlcm = (int***)calloc(8,sizeof(int**));
+	for (i = 0; i < 8; i++) {
+		matrizesGlcm[i] = (int**)calloc(256,sizeof(int*));
+		for (j = 0; j < 256; j++) {
+			matrizesGlcm[i][j] = (int*)calloc(256,sizeof(int));
+		}
+	}
+
+  for (t = 0; t < 8; t++) {
+    for (i = 1; i < row-1; i++) {
+      for (j = 1; j < colum-1; j++) {
+        switch (t) {
+          case 0:
+            matrizesGlcm[t][pixels[i][j]][pixels[i-1][j-1]]++;
+            break;
+          case 1:
+            matrizesGlcm[t][pixels[i][j]][pixels[i-1][j]]++;
+            break;
+          case 2:
+            matrizesGlcm[t][pixels[i][j]][pixels[i-1][j+1]]++;
+            break;
+          case 3:
+            matrizesGlcm[t][pixels[i][j]][pixels[i][j-1]]++;
+            break;
+          case 4:
+            matrizesGlcm[t][pixels[i][j]][pixels[i][j+1]]++;
+            break;
+          case 5:
+            matrizesGlcm[t][pixels[i][j]][pixels[i+1][j-1]]++;
+            break;
+          case 6:
+            matrizesGlcm[t][pixels[i][j]][pixels[i+1][j]]++;
+            break;
+          case 7:
+            matrizesGlcm[t][pixels[i][j]][pixels[i+1][j+1]]++;
+        }
+      }
+    }
+    if (cont%2) {
+      caracteristicas[(cont-1)/2][512+3*t] = calculateEnergyLevel(matrizesGlcm[t]);
+      caracteristicas[(cont-1)/2][512+3*t+1] = calculateHomogeneityLevel(matrizesGlcm[t]);
+      caracteristicas[(cont-1)/2][512+3*t+2] = calculateContrastLevel(matrizesGlcm[t]);
+    } else {
+      caracteristicas[IMAGENS/2+cont/2][512+3*t] = calculateEnergyLevel(matrizesGlcm[t]);
+      caracteristicas[IMAGENS/2+cont/2][512+3*t+1] = calculateHomogeneityLevel(matrizesGlcm[t]);
+      caracteristicas[IMAGENS/2+cont/2][512+3*t+2] = calculateContrastLevel(matrizesGlcm[t]);
+    }
+  }
+
+  for (i = 0; i < 8; i++) {
+    for (j = 0; j < 256; j++) {
+      free(matrizesGlcm[i][j]);
+    }
+    free(matrizesGlcm[i]);
+  }
+  free(matrizesGlcm);
+
+}
+
+int calculateContrastLevel(int **pixels){
+  int i,j,total=0;
+  for (i = 0; i < 256; i++) {
+    for (j = 0; j < 256; j++) {
+      total += pixels[i][j]*((i-j)*(i-j));
+    }
+  }
+  return total;
+}
+
+float calculateHomogeneityLevel(int **pixels){
+  int i,j;
+  float total=0.0;
+  for (i = 0; i < 256; i++) {
+    for (j = 0; j < 256; j++) {
+      total += pixels[i][j]/(1+abs(i-j));
+    }
+  }
+  return total;
+}
+
+int calculateEnergyLevel(int **pixels){
+  int i,j,total=0;
+  for (i = 0; i < 256; i++) {
+    for (j = 0; j < 256; j++) {
+      total += ((pixels[i][j])*(pixels[i][j]));
+    }
+  }
+  return total;
+}
