@@ -28,6 +28,7 @@ int main() {
   char fileName[33] = "";
   static int asphalt[50], grass[50];
 
+  printf("CHEGOU");
   allocMatrix(arrayImages);
   calculateTrainingMatrics(&rows, &columns, grass, asphalt, fileName, fp);
 
@@ -59,41 +60,42 @@ void calculateTrainingMatrics(int *rows, int *columns, int *grass, int *asphalt,
 
 void selectAsphaltImages(int *asphalt, int *rows, int *columns, char *fileName, FILE *fp) {
   int contAsphalt;
-  int randomNumber, value;
+  int randomNumber;
+  char value;
   randomNumber = generatorRandomNumbers();
   sprintf(fileName,"./DataSet/asphalt/asphalt_%02d.txt", randomNumber);
   asphalt[randomNumber-1] = 1;
 
-  //countRowsAndColumns(fileName, fp, &columns, &rows);
+  countRowsAndColumns(fileName, fp, &columns, &rows);
 }
 
 void selectGrassImages(int *grass, int *rows, int *columns, char *fileName, FILE *fp){
   int contGrass;
-  int randomNumber, value;
+  int randomNumber;
+  char value;
   randomNumber = generatorRandomNumbers();
-  sprintf(fileName,"./DataSet/grass/grass_0%d.txt", randomNumber);
+  sprintf(fileName,"./DataSet/grass/grass_%02d.txt", randomNumber);
   grass[randomNumber-1] = 1;
 
-  //countRowsAndColumns(fileName, fp, &columns, &rows);
+  countRowsAndColumns(fileName, fp, &columns, &rows);
 }
 
 void countRowsAndColumns(char *fileName, FILE *fp, int *columns, int *rows){
-  int value;
-  fp = fopen(fileName,"r");
+  char value;
 
+  fp = fopen(fileName,"r");
   while(!feof(fp)){
-    fscanf(fp, "%d",&value);
+    fscanf(fp,"%c",&value);
     if(value == ';'){
       *columns++;
-    }
-    else if(value == '\n'){
+    } else if(value == '\n'){
       *rows++;
     }
   }
-  *rows--;
-  *columns = *columns/(*rows)+1;
-  fclose(fp);
-
+  *rows -= 1;
+  //*columns = *columns/(*(rows+1));
+   printf("%d %d\n",*rows,*columns);
+   fclose(fp);
 }
 
 // void selectTrainingImagens(){
