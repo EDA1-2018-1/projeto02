@@ -122,8 +122,9 @@ void ilbp(int **pixels, int rows, int columns, float **arrayImages, int value){
 
 void quadranteIlbp(int **pixels,int row,int colum,float **arrayImages,int value){
   float total=0.0;
-  int value=0,min;
+  int min, count;
   int vetor[9];
+  value=0;
   for (int i = row-1; i <= row+1; i++) {
     for (int j = colum-1; j <= colum+1; j++) {
       total += *(*(pixels+i)+j);
@@ -146,7 +147,7 @@ void quadranteIlbp(int **pixels,int row,int colum,float **arrayImages,int value)
   }
 }
 
-int minValue(int *vetor,int mini,int cont){
+int minValue(int *vetor,int mini,int count){
   int n;
   if (count == 9) {
     return mini;
@@ -156,7 +157,7 @@ int minValue(int *vetor,int mini,int cont){
       mini = n;
     }
     rotVetor(vetor);
-    return minValue(vetor,min,count+1);
+    return minValue(vetor,mini,count+1);
   }
 }
 
