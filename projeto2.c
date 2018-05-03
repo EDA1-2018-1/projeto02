@@ -58,7 +58,8 @@ void allocMatrix(float **arrayImages){
 }
 
 void calculateTrainingMatrics(int *rows, int *columns, int *grass, int *asphalt, char *fileName, FILE *fp){
-  int count, value;
+  int count, value, pixels;
+  float arrayImages;
   for(count=0;count<50;count++){
     rows=0;
     columns=0;
@@ -68,6 +69,20 @@ void calculateTrainingMatrics(int *rows, int *columns, int *grass, int *asphalt,
     } else {
       selectAsphaltImages(asphalt, &rows, &columns, fileName, fp);
     }
+
+    pixels = (int**)malloc(columns*sizeof(int*));
+    for(i = 0; i<rows; i++){
+      *(pixels+i) = (int*)malloc(columns*sizeof(int));
+    }
+
+    fp = fopen(fileName,"r");
+    for(i = 0; i<rows; i++)
+      for(j = 0; j<columns; j++){
+        fscanf(fp,"%d%c",&pixel,&value);
+        *(*(pixels+i)+j) = pixel;
+      }
+
+     ilbp(pixels, rows, columns, arrayImages, value);
   }
 }
 
@@ -304,14 +319,14 @@ void glcm(int **pixels, int row, int colum, float **arrayImages,int count){
         }
       }
     }
-    if (cont%2) {
-      caracteristicas[(cont-1)/2][512+3*t] = calculateEnergyLevel(matrizesGlcm[t]);
-      caracteristicas[(cont-1)/2][512+3*t+1] = calculateHomogeneityLevel(matrizesGlcm[t]);
-      caracteristicas[(cont-1)/2][512+3*t+2] = calculateContrastLevel(matrizesGlcm[t]);
+    if (count%2) {
+      arrayImages[(count-1)/2][512+3*t] = calculateEnergyLevel(matrizesGlcm[t]);
+      arrayImages[(count-1)/2][512+3*t+1] = calculateHomogeneityLevel(matrizesGlcm[t]);
+      arrayImages[(count-1)/2][512+3*t+2] = calculateContrastLevel(matrizesGlcm[t]);
     } else {
-      caracteristicas[IMAGENS/2+cont/2][512+3*t] = calculateEnergyLevel(matrizesGlcm[t]);
-      caracteristicas[IMAGENS/2+cont/2][512+3*t+1] = calculateHomogeneityLevel(matrizesGlcm[t]);
-      caracteristicas[IMAGENS/2+cont/2][512+3*t+2] = calculateContrastLevel(matrizesGlcm[t]);
+      arrayImages[256/2+count/2][512+3*t] = calculateEnergyLevel(matrizesGlcm[t]);
+      arrayImages[256/2+count/2][512+3*t+1] = calculateHomogeneityLevel(matrizesGlcm[t]);
+      arrayImages[256/2+count/2][512+3*t+2] = calculateContrastLevel(matrizesGlcm[t]);
     }
   }
 
