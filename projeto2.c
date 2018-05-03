@@ -28,7 +28,6 @@ int main() {
   char fileName[33] = "";
   static int asphalt[50], grass[50];
 
-  printf("CHEGOU");
   allocMatrix(arrayImages);
   calculateTrainingMatrics(&rows, &columns, grass, asphalt, fileName, fp);
 
@@ -93,8 +92,6 @@ void countRowsAndColumns(char *fileName, FILE *fp, int *columns, int *rows){
     }
   }
   *rows -= 1;
-  //*columns = *columns/(*(rows+1));
-   printf("%d %d\n",*rows,*columns);
    fclose(fp);
 }
 
@@ -112,19 +109,20 @@ int generatorRandomNumbers(){
 }
 
 void ilbp(int **pixels, int rows, int columns, float **arrayImages, int value){
-  int i,j;
-  for(i = 1; i < rows-1; i++) {
-    for (j = 1; j < columns-1; j++) {
-      quadranteIlbp(pixels,i,j,arrayImages,value);
+  int row, column;
+  for(row = 1; row < rows-1; row++) {
+    for (column = 1; column < columns-1; column++) {
+      quadranteIlbp(pixels,row,column,arrayImages,value);
     }
   }
 }
 
-void quadranteIlbp(int **pixels,int row,int colum,float **arrayImages,int value){
+void quadranteIlbp(int **pixels, int row, int colum, float **arrayImages, int value){
   float total=0.0;
   int min, count;
   int vetor[9];
   value=0;
+
   for (int i = row-1; i <= row+1; i++) {
     for (int j = colum-1; j <= colum+1; j++) {
       total += *(*(pixels+i)+j);
@@ -139,7 +137,8 @@ void quadranteIlbp(int **pixels,int row,int colum,float **arrayImages,int value)
       vetor[i] = 0;
     }
   }
-  min = minValue(vetor,256,0);
+  min = findMinValue(vetor,256,0);
+
   if (count%2) {
     arrayImages[(count-1)/2][min]+=1;
   } else {
@@ -147,40 +146,41 @@ void quadranteIlbp(int **pixels,int row,int colum,float **arrayImages,int value)
   }
 }
 
-int minValue(int *vetor,int mini,int count){
+int findMinValue(int *vetor,int mini,int count){
   int n;
+
   if (count == 9) {
     return mini;
   } else {
-    n = binForDec(vetor);
+    n = transfomBinToDec(vetor);
     if (n < mini) {
       mini = n;
     }
-    rotVetor(vetor);
-    return minValue(vetor,mini,count+1);
+    rotateArray(vetor);
+    return findMinValue(vetor,mini,count+1);
   }
 }
 
-int binForDec(int *bin){
+int transfomBinToDec(int *bin){
   int decimal=0;
   for (int i = 0; i < 9; i++) {
-    decimal += pow(2,(8-i))*bin[i];
+    decimal += ((8-i)*(8-i))*bin[i];
   }
   return decimal;
 }
 
-void rotVetor(int *vetor){
+void rotateArray(int *vetor){
   int count = vetor[0];
-  int count1;
+  int counter;
   vetor[0] = vetor[8];
   for (int i = 1; i < 9; i++) {
-    count1 = vetor[i];
+    counter = vetor[i];
     vetor[i] = count;
-    count = count1;
+    count = counter;
   }
 }
 
-void normVet(float *vetor,int tamVet){
+void normalizeArray(float *vetor,int tamVet){
 
   int maior=0,menor=10000,i;
   for (i = 0; i < tamVet; i++) {
@@ -198,7 +198,7 @@ void normVet(float *vetor,int tamVet){
   }
 }
 
-void fazMedia(float **arrayImages,float *medGrass,float *medAsphalt){
+void average(float **arrayImages,float *avgGrass,float *avgAsphalt){
 
   int i,j;
   float total=0.0;
@@ -207,30 +207,30 @@ void fazMedia(float **arrayImages,float *medGrass,float *medAsphalt){
     for (i = 0; i < 50/2; i++) {
       total+= arrayImages[i][j];
     }
-    medGrass[j] = total/(50/2);
+    avgGrass[j] = total/(50/2);
     total = 0.0;
     for (i = 50/2; i < 50; i++) {
       total+= arrayImages[i][j];
     }
-    medAsphalt[j] = total/(50/2);
+    avgAsphalt[j] = total/(50/2);
     total = 0.0;
   }
 
 }
 
-void medEuclidiana(float **arrayImages,float *medAsphalt,float *medGrass,int *acerto,int *aceitacaoFalsa,int *rejeicaoFalsa){
+void averageEuclidiana(float **arrayImages,float *avgAsphalt,float *avgGrass,int *acerto,int *aceitacaoFalsa,int *rejeicaoFalsa){
   float total = 0.0,distGrass,distAsphalt;
   int i,j;
   for (i = 0; i < 50; i++) {
     for (j = 0; j < 536; j++) {
-      total+= pow(arrayImages[i][j] - medGrass[j],2);
+      total+= (arrayImages[i][j] - avgGrass[j])*(arrayImages[i][j] - avgGrass[j]);
     }
-    distGrass = sqrt(total);
+    distGrass = (total)*(1/2);
     total = 0.0;
     for (j = 0; j < 536; j++) {
-      total+= pow(arrayImages[i][j] - medAsphalt[j],2);
+      total+= (arrayImages[i][j] - avgAsphalt[j])*(arrayImages[i][j] - avgAsphalt[j]);
     }
-    distAsphalt = sqrt(total);
+    distAsphalt = (total)*(1/2);
     total = 0.0;
     if (i < 50/2) {
       if (distGrass < distAsphalt) {
