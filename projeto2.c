@@ -14,8 +14,9 @@
 
 void allocMatrix(float **arrayImages);
 void calculateTrainingMatrics(int *rows, int *columns, int *grass, int *asphalt, char *fileName, FILE *fp);
-void selectAsphaltImages(int *asphalt, int *rows, int *columns, char *fileName);
-void selectGrassImages(int *grass, int *rows, int *columns, char *fileName);
+void selectAsphaltImages(int *asphalt, int *rows, int *columns, char *fileName, FILE *fp);
+void selectGrassImages(int *grass, int *rows, int *columns, char *fileName, FILE *fp);
+void countRowsAndColumns(char *fileName, FILE *fp, int *columns, int *rows);
 int generatorRandomNumbers();
 
 int main() {
@@ -26,7 +27,6 @@ int main() {
   float **arrayImages; //caracteristicas
   char fileName[33] = "";
   static int asphalt[50], grass[50];
-
 
   allocMatrix(arrayImages);
   calculateTrainingMatrics(&rows, &columns, grass, asphalt, fileName, fp);
@@ -44,52 +44,57 @@ void allocMatrix(float **arrayImages){
 }
 
 void calculateTrainingMatrics(int *rows, int *columns, int *grass, int *asphalt, char *fileName, FILE *fp){
-  printf("CHEGOU");
-  int count=0, value;
-  while(count < 50){
+  int count, value;
+  for(count=0;count<50;count++){
     rows=0;
     columns=0;
 
     if(count%2){
-      selectGrassImages(grass, rows, columns, fileName);
+      selectGrassImages(grass, &rows, &columns, fileName, fp);
     } else {
-      selectAsphaltImages(asphalt, rows, columns, fileName);
+      selectAsphaltImages(asphalt, &rows, &columns, fileName, fp);
     }
-    fp = fopen(fileName, "r");
-    while(!feof(fp)){
-      fscanf(fp, "%d", &value);
-        if(value == ';'){
-          *columns += 1;
-        } else if(value == '\n'){
-          *rows += 1;
-        }
-    }
-    *rows -= 1;
-    *columns = *columns/(*rows)+1;
-    printf("%d %d\n",*rows,*columns);
-    fclose(fp);
   }
 }
 
-void selectAsphaltImages(int *asphalt, int *rows, int *columns, char *fileName) {
+void selectAsphaltImages(int *asphalt, int *rows, int *columns, char *fileName, FILE *fp) {
   int contAsphalt;
-  int randomNumber;
+  int randomNumber, value;
   randomNumber = generatorRandomNumbers();
   sprintf(fileName,"./DataSet/asphalt/asphalt_%02d.txt", randomNumber);
   asphalt[randomNumber-1] = 1;
+
+  //countRowsAndColumns(fileName, fp, &columns, &rows);
 }
 
-void selectGrassImages(int *grass, int *rows, int *columns, char *fileName){
+void selectGrassImages(int *grass, int *rows, int *columns, char *fileName, FILE *fp){
   int contGrass;
-  int randomNumber;
+  int randomNumber, value;
   randomNumber = generatorRandomNumbers();
   sprintf(fileName,"./DataSet/grass/grass_0%d.txt", randomNumber);
   grass[randomNumber-1] = 1;
+
+  //countRowsAndColumns(fileName, fp, &columns, &rows);
 }
 
-// void countRowsAndColumns(char *fileName){
-//
-// }
+void countRowsAndColumns(char *fileName, FILE *fp, int *columns, int *rows){
+  int value;
+  fp = fopen(fileName,"r");
+
+  while(!feof(fp)){
+    fscanf(fp, "%d",&value);
+    if(value == ';'){
+      *columns++;
+    }
+    else if(value == '\n'){
+      *rows++;
+    }
+  }
+  *rows--;
+  *columns = *columns/(*rows)+1;
+  fclose(fp);
+
+}
 
 // void selectTrainingImagens(){
 //
